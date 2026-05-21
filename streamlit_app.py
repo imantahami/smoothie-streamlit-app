@@ -40,7 +40,14 @@ if ingredients_list:
         values
         ('{ingredients_string}', '{name_on_order}')
     """
-    # new section to display smoothie request nutrition information
+
+    time_to_insert = st.button('Submit Order')
+
+    if time_to_insert:
+        session.sql(my_insert_stmt).collect()
+        st.success(f'Your Smoothie is ordered, {name_on_order}!', icon="✅")
+
+# new section to display smoothie request nutrition information
 
 smoothiefroot_response = requests.get(
     "https://my.smoothiefroot.com/api/fruit/watermelon"
@@ -50,10 +57,7 @@ st.text(smoothiefroot_response)
 
 st.text(smoothiefroot_response.json())
 
-st.dataframe(data=smoothiefroot_response.json(), use_container_width=True)
-
-    time_to_insert = st.button('Submit Order')
-
-    if time_to_insert:
-        session.sql(my_insert_stmt).collect()
-        st.success(f'Your Smoothie is ordered, {name_on_order}!', icon="✅")
+st.dataframe(
+    data=smoothiefroot_response.json(),
+    use_container_width=True
+)
