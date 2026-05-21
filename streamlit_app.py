@@ -18,7 +18,10 @@ session = cnx.session()
 
 my_dataframe = session.table(
     "smoothies.public.fruit_options"
-).select(col("FRUIT_NAME"))
+).select(
+    col("FRUIT_NAME"),
+    col("SEARCH_ON")
+)
 
 ingredients_list = st.multiselect(
     'Choose up to 5 ingredients:',
@@ -30,14 +33,20 @@ if ingredients_list:
 
     ingredients_string = ''
 
-    for fruit_chosen in ingredients_list:
+    for row in ingredients_list:
+
+        fruit_chosen = row["FRUIT_NAME"]
+        search_on = row["SEARCH_ON"]
+
+        if search_on is None:
+            search_on = fruit_chosen
 
         ingredients_string += fruit_chosen + ' '
 
         st.subheader(fruit_chosen + ' Nutrition Information')
 
         smoothiefroot_response = requests.get(
-            f"https://my.smoothiefroot.com/api/fruit/{fruit_chosen}"
+            f"https://my.smoothiefroot.com/api/fruit/{search_on}"
         )
 
         sf_df = st.dataframe(
