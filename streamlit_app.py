@@ -1,5 +1,6 @@
 # Import python packages.
 import streamlit as st
+import requests
 from snowflake.snowpark.functions import col
 from snowflake.snowpark import Session
 
@@ -39,6 +40,17 @@ if ingredients_list:
         values
         ('{ingredients_string}', '{name_on_order}')
     """
+    # new section to display smoothie request nutrition information
+
+smoothiefroot_response = requests.get(
+    "https://my.smoothiefroot.com/api/fruit/watermelon"
+)
+
+st.text(smoothiefroot_response)
+
+st.text(smoothiefroot_response.json())
+
+st.dataframe(data=smoothiefroot_response.json(), use_container_width=True)
 
     time_to_insert = st.button('Submit Order')
 
