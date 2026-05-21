@@ -24,7 +24,6 @@ my_dataframe = session.table(
     col("SEARCH_ON")
 )
 
-# Convert Snowpark dataframe to Pandas dataframe
 pd_df = my_dataframe.to_pandas()
 
 ingredients_list = st.multiselect(
@@ -46,8 +45,10 @@ if ingredients_list:
             'SEARCH_ON'
         ].iloc[0]
 
-        if search_on is None:
+        if search_on is None or search_on == '':
             search_on = fruit_chosen
+
+        st.write("Searching API with:", search_on)
 
         st.subheader(fruit_chosen + ' Nutrition Information')
 
