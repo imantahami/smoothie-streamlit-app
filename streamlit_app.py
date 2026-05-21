@@ -1,6 +1,7 @@
 # Import python packages.
 import streamlit as st
 import requests
+import pandas as pd
 from snowflake.snowpark.functions import col
 from snowflake.snowpark import Session
 
@@ -23,9 +24,12 @@ my_dataframe = session.table(
     col("SEARCH_ON")
 )
 
+# Convert Snowpark dataframe to Pandas dataframe
+pd_df = my_dataframe.to_pandas()
+
 ingredients_list = st.multiselect(
     'Choose up to 5 ingredients:',
-    my_dataframe,
+    pd_df['FRUIT_NAME'],
     max_selections=5
 )
 
@@ -33,15 +37,17 @@ if ingredients_list:
 
     ingredients_string = ''
 
-    for row in ingredients_list:
+    for fruit_chosen in ingredients_list:
 
-        fruit_chosen = row["FRUIT_NAME"]
-        search_on = row["SEARCH_ON"]
+        ingredients_string += fruit_chosen + ' '
+
+        search_on = pd_df.loc[
+            pd_df['FRUIT_NAME'] == fruit_chosen,
+            'SEARCH_ON'
+        ].iloc[0]
 
         if search_on is None:
             search_on = fruit_chosen
-
-        ingredients_string += fruit_chosen + ' '
 
         st.subheader(fruit_chosen + ' Nutrition Information')
 
